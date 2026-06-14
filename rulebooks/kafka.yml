@@ -14,8 +14,8 @@
         offset: "{{ offset | default('earliest', true) }}"
         security_protocol: "{{ security_protocol | default('PLAINTEXT', true) }}"
         sasl_mechanism: "{{ sasl_mechanism | default('PLAIN', true) }}"
-        sasl_username: "{{ sasl_username | default(None, true) }}"
-        sasl_password: "{{ sasl_password | default(None, true) }}"
+        sasl_plain_username: "{{ sasl_username | default(None, true) }}"
+        sasl_plain_password: "{{ sasl_password | default(None, true) }}"
         check_hostname: "{{ check_hostname | default(None, true) }}"
         verify_mode: "{{ verify_mode | default('CERT_NONE', true) }}"
         feedback: false
