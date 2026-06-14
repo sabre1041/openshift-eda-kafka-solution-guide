@@ -3,21 +3,21 @@
   sources:
     - name: kafka_benchmark
       ansible.eda.kafka:
-        host: "{{ host | default('localhost') }}"
-        port: "{{ port | default('9092') }}"
-        cafile: "{{ eda.filename.cafile | default(None) }}"
-        certfile: "{{ eda.filename.certfile | default(None) }}"
-        keyfile: "{{ eda.filename.keyfile | default(None) }}"
-        encoding: "{{ encoding | default('utf-8') }}"
-        topic: "{{ topic | default('openshift-resources') }}"
-        group_id: "{{ group_id | default('openshift-group') }}"
-        offset: "{{ offset | default('earliest') }}"
-        security_protocol: "{{ security_protocol | default('PLAINTEXT') }}"
-        sasl_mechanism: "{{ sasl_mechanism | default('PLAIN') }}"
-        sasl_plain_username: "{{ sasl_plain_username | default(None) }}"
-        sasl_plain_password: "{{ sasl_plain_password | default(None) }}"
-        check_hostname: "{{ check_hostname | default(None) }}"
-        verify_mode: "{{ verify_mode | default('CERT_NONE') }}"
+        host: "{{ host | default('localhost', true) }}"
+        port: "{{ port | default('9092', true) }}"
+        cafile: "{{ eda.filename.cafile | default(None, true) }}"
+        certfile: "{{ eda.filename.certfile | default(None, true) }}"
+        keyfile: "{{ eda.filename.keyfile | default(None, true) }}"
+        encoding: "{{ encoding | default('utf-8', true) }}"
+        topic: "{{ topic | default('openshift-resources', true) }}"
+        group_id: "{{ group_id | default('openshift-group', true) }}"
+        offset: "{{ offset | default('earliest', true) }}"
+        security_protocol: "{{ security_protocol | default('PLAINTEXT', true) }}"
+        sasl_mechanism: "{{ sasl_mechanism | default('PLAIN', true) }}"
+        sasl_username: "{{ sasl_username | default(None, true) }}"
+        sasl_password: "{{ sasl_password | default(None, true) }}"
+        check_hostname: "{{ check_hostname | default(None, true) }}"
+        verify_mode: "{{ verify_mode | default('CERT_NONE', true) }}"
         feedback: false
   rules:
     - name: consume all events
