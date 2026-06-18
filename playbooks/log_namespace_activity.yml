@@ -1,0 +1,13 @@
+---
+- name: Log OpenShift namespace activity
+  hosts: localhost
+  gather_facts: false
+
+  tasks:
+    - name: Display namespace event details
+      ansible.builtin.debug:
+        msg: |
+          Namespace Event Detected
+          ========================
+          Event Type: {{ event_type }}
+          Namespace:  {{ namespace_name }}
