@@ -22,41 +22,28 @@
   rules:
     - name: Namespace created
       condition: event.body.type is defined and event.body.type == "dev.knative.apiserver.resource.add"
-      action:
-        run_job_template:
-          organization: "Default"
-          name: "Display OpenShift Namespace Event"
-          job_args:
-            extra_vars:
-              event_type: "created"
-              namespace_name: "{{ event.body.data.metadata.name }}"
-              namespace_labels: "{{ event.body.data.metadata.labels | default({}) }}"
-
-    # - name: Namespace updated
-    #   condition: event.body.type is defined and event.body.type == "dev.knative.apiserver.resource.update"
-    #   action:
-    #     run_job_template:
-    #       organization: "Default"
-    #       name: "Display OpenShift Namespace Event"
-    #       job_args:
-    #         extra_vars:
-    #           event_type: "updated"
-    #           namespace_name: "{{ event.body.data.metadata.name }}"
-    #           namespace_labels: "{{ event.body.data.metadata.labels | default({}) }}"
+      actions:
+        - debug:
+            msg: "Namespace created event received: {{ event.body.data.metadata.name | default('unknown') }}"
+        - run_job_template:
+            organization: "Default"
+            name: "Display OpenShift Namespace Event"
+            job_args:
+              extra_vars:
+                event_type: "created"
+                namespace_name: "{{ event.body.data.metadata.name }}"
+                namespace_labels: "{{ event.body.data.metadata.labels | default({}) }}"
 
     - name: Namespace deleted
       condition: event.body.type is defined and event.body.type == "dev.knative.apiserver.resource.delete"
-      action:
-        run_job_template:
-          organization: "Default"
-          name: "Display OpenShift Namespace Event"
-          job_args:
-            extra_vars:
-              event_type: "deleted"
-              namespace_name: "{{ event.body.data.metadata.name }}"
-
-    - name: Log all namespace events
-      condition: event.body is defined
-      action:
-        debug:
-          msg: "Namespace event received: {{ event.body.type }} - {{ event.body.data.metadata.name | default('unknown') }}"
+      actions:
+        - debug:
+            msg: "Namespace deleted event received: {{ event.body.data.metadata.name | default('unknown') }}"
+        - run_job_template:
+            organization: "Default"
+            name: "Display OpenShift Namespace Event"
+            job_args:
+              extra_vars:
+                event_type: "deleted"
+                namespace_name: "{{ event.body.data.metadata.name }}"
+                namespace_labels: "{{ event.body.data.metadata.labels | default({}) }}"
