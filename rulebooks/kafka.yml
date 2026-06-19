@@ -1,7 +1,7 @@
-- name: Read from Kafka topic
+- name: Read OpenShift Resources from from Kafka topic
   hosts: all
   sources:
-    - name: kafka_benchmark
+    - name: kafka
       ansible.eda.kafka:
         host: "{{ host | default('localhost', true) }}"
         port: "{{ port | default('9092', true) }}"
@@ -18,10 +18,45 @@
         sasl_plain_password: "{{ sasl_password | default(None, true) }}"
         check_hostname: "{{ check_hostname | default(None, true) }}"
         verify_mode: "{{ verify_mode | default('CERT_NONE', true) }}"
-        feedback: false
+
   rules:
-    - name: consume all events
+    - name: Namespace created
+      condition: event.body.type is defined and event.body.type == "dev.knative.apiserver.resource.add"
+      action:
+        run_job_template:
+          organization: "Default"
+          name: "Log Namespace Activity"
+          job_args:
+            extra_vars:
+              event_type: "created"
+              namespace_name: "{{ event.body.data.metadata.name }}"
+              namespace_labels: "{{ event.body.data.metadata.labels | default({}) }}"
+
+    # - name: Namespace updated
+    #   condition: event.body.type is defined and event.body.type == "dev.knative.apiserver.resource.update"
+    #   action:
+    #     run_job_template:
+    #       organization: "Default"
+    #       name: "Log Namespace Activity"
+    #       job_args:
+    #         extra_vars:
+    #           event_type: "updated"
+    #           namespace_name: "{{ event.body.data.metadata.name }}"
+    #           namespace_labels: "{{ event.body.data.metadata.labels | default({}) }}"
+
+    - name: Namespace deleted
+      condition: event.body.type is defined and event.body.type == "dev.knative.apiserver.resource.delete"
+      action:
+        run_job_template:
+          organization: "Default"
+          name: "Log Namespace Activity"
+          job_args:
+            extra_vars:
+              event_type: "deleted"
+              namespace_name: "{{ event.body.data.metadata.name }}"
+
+    - name: Log all namespace events
       condition: event.body is defined
       action:
         debug:
-          msg: "Consumed event with body: {{ event.body }}"
+          msg: "Namespace event received: {{ event.body.type }} - {{ event.body.data.metadata.name | default('unknown') }}"
